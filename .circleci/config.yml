@@ -21,7 +21,10 @@ jobs:
           paths:
             - ~/.m2
           key: circleci-demo-java-sprint-{{  checksum "pom.xml" }}
-      - run: mvn package
+      - run:
+        command: |
+          mvn test -Dtest=$(circleci tests glob "src/test/**/*.java" | circleci tests split --split-by-timing | sed -E 's/^(.*\/)*//' | sed -z 's/\n/,/g')
+          mvn package -Dmaven.test.skip
       - store_test_results:
           path: target/surefire-reports
       - store_artifacts:
